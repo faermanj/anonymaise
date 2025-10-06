@@ -3,10 +3,10 @@
   "image": "mcr.microsoft.com/devcontainers/base",
   "features": {
     "ghcr.io/devcontainers/features/docker-in-docker:2": {},
-    "ghcr.io/audacioustux/devcontainers/graalvm:1": {
-      "java": "25"
+    "ghcr.io/devcontainers/features/java:1": {
+      "jdkDistro": "graalce"
     },
-    "ghcr.io/devcontainers/features/quarkus:1": {}
+    "ghcr.io/devcontainers-extra/features/quarkus-sdkman:2": {}
   },
   "postCreateCommand": "source ./devcontainer/postCreateCommand.sh",
   "customizations": {
