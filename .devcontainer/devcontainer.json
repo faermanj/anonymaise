@@ -6,6 +6,7 @@
     "ghcr.io/devcontainers/features/java:1": {
       "jdkDistro": "graalce"
     },
+    "ghcr.io/devcontainers-extra/features/maven-sdkman:2"	: {},
     "ghcr.io/devcontainers-extra/features/quarkus-sdkman:2": {}
   },
   "postCreateCommand": "source ./devcontainer/postCreateCommand.sh",
