@@ -26,7 +26,7 @@ public class AyMain implements QuarkusApplication, Runnable {
 
         Log.info("AY! Anonymaise is *destructive*, sure you have a backup? ");
         // Wait 15 seconds to allow user to quit, in another method
-        waitForUserQuit();
+
         
         ay(execution);
     }
@@ -56,14 +56,6 @@ public class AyMain implements QuarkusApplication, Runnable {
         }
     }
 
-    private void waitForUserQuit() {
-        
-        try {
-            Thread.sleep(15000);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
-    }
 
     @Override
     public int run(String... args) throws Exception {
