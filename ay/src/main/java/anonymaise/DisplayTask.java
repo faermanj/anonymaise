@@ -21,7 +21,7 @@ public class DisplayTask implements Callable<Void> {
     public Void call() throws Exception {
         while (execution.getCurrentCount() < maxCount) {
             try {
-                Thread.sleep(displayInterval);
+                Thread.sleep(displayInterval.toMillis());
                 clearConsole();
                 displayExecutionInfo();
             } catch (InterruptedException e) {

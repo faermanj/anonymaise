@@ -18,13 +18,18 @@ public class TimerTask implements Callable<Void> {
     public Void call() throws Exception {
         for (int i = 0; i < maxCount; i++) {
             execution.increment();
+            setCountdown(maxCount - i - 1);
             try {
-                Thread.sleep(interval);
+                Thread.sleep(interval.toMillis());
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
                 break;
             }
         }
         return null;
+    }
+
+    private void setCountdown(int remaining) {
+        execution.setCountdown(remaining);
     }
 }

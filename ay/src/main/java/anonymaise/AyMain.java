@@ -26,9 +26,8 @@ public class AyMain implements QuarkusApplication, Runnable {
 
         Log.info("AY! Anonymaise is *destructive*, sure you have a backup? ");
         // Wait 15 seconds to allow user to quit, in another method
-
-        
         ay(execution);
+        Log.info("AY! Anonymaise finished! " + execution);
     }
 
     private void ay(Execution execution) {
