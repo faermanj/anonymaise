@@ -1,5 +1,5 @@
 # docker build --no-cache --progress=plain -f Containerfile -t ay:latest . 
-# docker push ay:latest
+# docker push ay:latest  
 
 # BUILD STAGE
 
