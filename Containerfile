@@ -24,7 +24,7 @@ RUN curl -L $ZLIB_URL | tar -xz -C /usr/local
 ENV CC="$TOOLCHAIN_DIR/bin/gcc"
 RUN bash -c "cd /usr/local/zlib-1.3.1 && ./configure --prefix=$TOOLCHAIN_DIR --static && make  && make install"
 
-# UPX from https://github.com/upx/upx using curl
+# UPX
 ARG UPX_URL="https://github.com/upx/upx/releases/download/v3.96/upx-3.96-amd64_linux.tar.xz"
 RUN curl -L $UPX_URL | tar -xJ -C /usr/local
 ENV PATH="/usr/local/upx-3.96-amd64_linux:${PATH}"
@@ -47,15 +47,6 @@ COPY . .
 
 # Build
 RUN make
-
-# Log the built files
-RUN find "./bin/"
-RUN ls -liah "/usr/src/bin/entrypoint"
-
-# Check binary linkage, dynamic dependencies, and permissions
-RUN file /usr/src/bin/entrypoint
-RUN ldd /usr/src/bin/entrypoint || echo "static or not a dynamic executable"
-RUN ls -l /usr/src/bin/entrypoint
 
 # RUNTIME STAGE
 FROM scratch
