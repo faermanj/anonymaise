@@ -21,11 +21,8 @@ public class AyMain implements QuarkusApplication, Runnable {
 
     @Override
     public void run() {        
-        // Create shared execution data object
         var execution = new Execution();
-
         Log.info("AY! Anonymaise is *destructive*, sure you have a backup? ");
-        // Wait 15 seconds to allow user to quit, in another method
         ay(execution);
         Log.info("AY! Anonymaise finished! " + execution);
     }
