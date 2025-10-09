@@ -1,6 +1,6 @@
 {
   "name": "Anonymaise Dev Container",
-  "image": "mcr.microsoft.com/devcontainers/base",
+  "image": "mcr.microsoft.com/devcontainers/docker-in-docker",
   "features": {
     "ghcr.io/devcontainers/features/java:1": {
       "jdkDistro": "graalce",
