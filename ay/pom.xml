@@ -7,7 +7,7 @@
 
     <properties>
         <compiler-plugin.version>3.14.0</compiler-plugin.version>
-        <maven.compiler.release>25</maven.compiler.release>
+        <maven.compiler.release>21</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
@@ -17,8 +17,7 @@
         <surefire-plugin.version>3.5.4</surefire-plugin.version>
         <!-- Required for Java 24+ to allow thread-local reset access -->
         <jvm.add-opens>--add-opens=java.base/java.lang=ALL-UNNAMED</jvm.add-opens>
-        <!-- Enable preview features -->
-        <jvm.enable-preview>--enable-preview</jvm.enable-preview>
+    <!-- Enable preview features (disabled for Java 21 native build) -->
         <!-- Suppress sun.misc.Unsafe deprecation warnings -->
         <jvm.suppress-warnings>--add-opens=java.base/sun.misc=ALL-UNNAMED</jvm.suppress-warnings>
     </properties>
@@ -43,6 +42,22 @@
         <dependency>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-arc</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-agroal</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-jdbc-h2</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-hibernate-orm</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-hibernate-orm-panache</artifactId>
         </dependency>
         <dependency>
             <groupId>io.quarkus</groupId>
@@ -79,9 +94,7 @@
                 <version>${compiler-plugin.version}</version>
                 <configuration>
                     <parameters>true</parameters>
-                    <compilerArgs>
-                        <arg>--enable-preview</arg>
-                    </compilerArgs>
+                    <!-- No preview features for Java 21 native build -->
                 </configuration>
             </plugin>
             <plugin>
