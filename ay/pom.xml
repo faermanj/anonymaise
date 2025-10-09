@@ -145,6 +145,7 @@
                 <quarkus.package.jar.enabled>false</quarkus.package.jar.enabled>
                 <skipITs>false</skipITs>
                 <quarkus.native.enabled>true</quarkus.native.enabled>
+                <quarkus.native.additional-build-args>--static,--libc=musl</quarkus.native.additional-build-args>
             </properties>
         </profile>
     </profiles>

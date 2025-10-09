@@ -1,0 +1,32 @@
+# docker build --no-cache --progress=plain -f Containerfile.corretto -t ay:corretto-latest . 
+# docker run --rm -it ay:corretto-latest
+# docker push ay:corretto-latest
+
+# BUILD STAGE
+
+ARG UBI="public.ecr.aws/amazoncorretto/amazoncorretto:latest"
+FROM ${UBI} AS build
+
+## As root
+USER root
+RUN bash -c "yum update -y \
+    && yum -y groupinstall 'Development Tools'"
+
+ENV JAVA_HOME="/usr/local/graalvm"
+ENV PATH="$JAVA_HOME/bin:${PATH}"
+
+## Copy source code
+RUN mkdir -p "/usr/src"
+WORKDIR "/usr/src"
+COPY . .
+
+# Build
+RUN make
+
+# RUNTIME STAGE
+FROM ${UBI}
+
+ARG BIN_PATH="/usr/src/bin"
+COPY --from=build ${BIN_PATH} ${BIN_PATH}
+
+ENTRYPOINT ["java", "-jar", "/usr/src/bin/quarkus-app/quarkus-run.jar"]
