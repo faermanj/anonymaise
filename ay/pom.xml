@@ -15,11 +15,6 @@
         <quarkus.platform.version>3.28.2</quarkus.platform.version>
         <skipITs>true</skipITs>
         <surefire-plugin.version>3.5.4</surefire-plugin.version>
-        <!-- Required for Java 24+ to allow thread-local reset access -->
-        <jvm.add-opens>--add-opens=java.base/java.lang=ALL-UNNAMED</jvm.add-opens>
-    <!-- Enable preview features (disabled for Java 21 native build) -->
-        <!-- Suppress sun.misc.Unsafe deprecation warnings -->
-        <jvm.suppress-warnings>--add-opens=java.base/sun.misc=ALL-UNNAMED</jvm.suppress-warnings>
     </properties>
 
     <dependencyManagement>
@@ -74,10 +69,6 @@
                 <artifactId>quarkus-maven-plugin</artifactId>
                 <version>${quarkus.platform.version}</version>
                 <extensions>true</extensions>
-                <configuration>
-                    <!-- Ensure dev mode starts with necessary JVM open module on JDK 24+ -->
-                    <jvmArgs>${jvm.add-opens} ${jvm.enable-preview} ${jvm.suppress-warnings}</jvmArgs>
-                </configuration>
                 <executions>
                     <execution>
                         <goals>

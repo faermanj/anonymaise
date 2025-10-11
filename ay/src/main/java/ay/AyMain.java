@@ -1,4 +1,4 @@
-package anonymaise;
+package ay;
 
 import io.quarkus.logging.Log;
 import io.quarkus.picocli.runtime.annotations.TopCommand;
@@ -19,22 +19,29 @@ public class AyMain implements QuarkusApplication, Runnable {
     @Inject
     CommandLine.IFactory factory; 
 
+    @Inject
+    Execution execution;
+
+    @Inject
+    AyTask ayTask;
+
+    @Inject
+    DisplayTask displayTask;
+
     @Override
     public void run() {        
-        var execution = new Execution();
         Log.info("AY! Anonymaise is *destructive*, sure you have a backup? ");
-        ay(execution);
+        Log.info("Included schemas: " + execution.getConfig().includeSchemas());  
+        ay();
         Log.info("AY! Anonymaise finished! " + execution);
     }
 
-    private void ay(Execution execution) {
+    private void ay() {
         try (ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor()) {
             // Create and start the timer task
-            TimerTask timerTask = new TimerTask(execution, 60, Duration.ofSeconds(1));
-            Future<?> timerFuture = executor.submit(timerTask);
+            Future<?> timerFuture = executor.submit(ayTask);
 
             // Create and start the display task
-            DisplayTask displayTask = new DisplayTask(execution, 60, Duration.ofSeconds(5));
             Future<?> displayFuture = executor.submit(displayTask);
 
             // Wait for both tasks to complete

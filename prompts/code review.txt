@@ -1,0 +1,8 @@
+Please review the the code indicated for adherence to best practices and community standards. 
+Focus on code readability, maintainability, efficiency, security, and proper use of language features. 
+Extract methods when possible.
+Organize imports.
+Sort members.
+Do not confirm, perform the changes and explain shortly.
+Code to review:
+* this file
