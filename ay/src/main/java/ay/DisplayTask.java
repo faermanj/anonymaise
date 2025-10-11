@@ -62,10 +62,10 @@ public class DisplayTask implements Callable<Void> {
             .mapToInt(String::length)
             .max().orElse(12);
         int maxTableNameWidth = tables.stream().mapToInt(t -> t.table().length()).max().orElse(16);
-        int labelWidth = Math.max(20, Math.max(maxColNameWidth, maxTableNameWidth));
+        // Add extra padding to avoid overflow
+        int labelWidth = Math.max(28, Math.max(maxColNameWidth, maxTableNameWidth) + 6);
         int ratingWidth = 8;
 
-        String colIndent = "    ";
         for (TableRecord table : tables) {
             // Table name and rating
             System.out.printf("%-" + labelWidth + "s %" + ratingWidth + ".2f\n", table.table(), table.ranking());
@@ -76,7 +76,9 @@ public class DisplayTask implements Callable<Void> {
                 colList.removeIf(e -> TableRecord.isIgnored(e.getValue()));
                 colList.sort((a, b) -> Float.compare(b.getValue(), a.getValue()));
                 for (var colEntry : colList) {
-                    System.out.printf(colIndent + "%-" + labelWidth + "s %" + ratingWidth + ".2f\n", colEntry.getKey(), colEntry.getValue());
+                    // Compensate label indentation so that ranks align
+                    String paddedLabel = String.format("%-" + labelWidth + "s", "  " + colEntry.getKey());
+                    System.out.printf("%s %" + ratingWidth + ".2f\n", paddedLabel, colEntry.getValue());
                 }
             }
             System.out.println(); // Newline between tables
