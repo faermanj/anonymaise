@@ -7,6 +7,7 @@ import jakarta.enterprise.event.Observes;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.persistence.EntityManager;
+import io.quarkus.hibernate.orm.PersistenceUnit;
 import io.quarkus.runtime.StartupEvent;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
@@ -15,6 +16,7 @@ import net.datafaker.Faker;
 @ApplicationScoped
 public class ProductDataInitListener {
     @Inject
+    @PersistenceUnit("ay")
     EntityManager em;
 
     @Inject

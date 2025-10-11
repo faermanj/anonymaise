@@ -17,13 +17,19 @@ public class DisplayTask implements Callable<Void> {
     private int intervalSeconds = 5;
 
     @Override
-    public Void call() throws Exception {
+    public Void call() {
         while (true) {
             clearScreen();
             printHeader();
             printTableAndColumnRankings();
-            Thread.sleep(intervalSeconds * 1000L);
+            try {
+                Thread.sleep(intervalSeconds * 1000L);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                break;
+            }
         }
+        return null;
     }
 
     private void clearScreen() {

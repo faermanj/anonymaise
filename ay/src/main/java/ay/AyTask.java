@@ -19,6 +19,7 @@ public class AyTask implements Callable<Void> {
     Execution execution;
 
     @Inject
+    @io.quarkus.agroal.DataSource("ay")
     DataSource ds;
 
     
