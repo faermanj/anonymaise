@@ -71,13 +71,28 @@ public class DisplayTask implements Callable<Void> {
             if (TableRecord.isIgnored(entry.ranking())) continue;
             records.add(entry);
         }
-        int colWidth = getTerminalColWidthSingle();
-        // Print header
-        String header = String.format("%-" + colWidth + "s", "");
-        System.out.println(header);
-        System.out.println("-".repeat(header.length()));
+        // Sort tables by ranking descending
+        records.sort((a, b) -> Float.compare(b.ranking(), a.ranking()));
+        int tableNameWidth = 32;
+        int ratingWidth = 8;
+        int colNameWidth = 24;
+        int colRatingWidth = 8;
+        String tableHeaderFmt = "% -" + tableNameWidth + "s %" + ratingWidth + ".2f";
+        String colFmt = " %-" + colNameWidth + "s %" + colRatingWidth + ".2f";
         for (TableRecord record : records) {
-            System.out.printf("%-" + colWidth + "s\n", record.toString());
+            // Table name and rating
+            System.out.printf(tableHeaderFmt, record.table(), record.ranking());
+            // Columns on the same line, sorted by rating desc
+            var columns = record.columnRecords();
+            if (columns != null && !columns.isEmpty()) {
+                var colList = new java.util.ArrayList<>(columns.entrySet());
+                colList.removeIf(e -> TableRecord.isIgnored(e.getValue()));
+                colList.sort((a, b) -> Float.compare(b.getValue(), a.getValue()));
+                for (var colEntry : colList) {
+                    System.out.printf(colFmt, colEntry.getKey(), colEntry.getValue());
+                }
+            }
+            System.out.println(); // Only one newline per table
         }
     }
 

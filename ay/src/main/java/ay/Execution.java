@@ -57,4 +57,10 @@ public class Execution {
     public boolean isSchemaIncluded(String schema) {
         return getConfig().includeSchemas().contains(schema.toUpperCase());
     }
+
+    @Inject
+    PIIClassifier classifier;
+    public float rank(Object value) {
+        return classifier.rank(value);
+    }
 }

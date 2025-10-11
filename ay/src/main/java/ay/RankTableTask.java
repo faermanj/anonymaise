@@ -1,6 +1,10 @@
+
 package ay;
 
 import java.sql.Connection;
+import java.sql.ResultSetMetaData;
+import java.util.HashMap;
+import java.util.Map;
 
 public class RankTableTask implements Runnable {
     Execution execution;
@@ -21,13 +25,50 @@ public class RankTableTask implements Runnable {
 
     @Override
     public void run() {
-        // Replace with actual table processing logic
+        // return immediately if schema is not included
+        if (!execution.isSchemaIncluded(schema)) {
+            System.out.println("Skipping table in schema: " + schema);
+            return;
+        }
         System.out.println("Processing table: " + table);
         long rowCount = countRows();
-        var includeSchema = execution.isSchemaIncluded(schema);
-        Float ranking = includeSchema ? Ranking.HIGHEST.getValue() : Ranking.IGNORED.getValue();
+        float samplePercentage = 0.1f;
+        try {
+            samplePercentage = execution.getConfig().samplePercentage();
+        } catch (Exception e) {
+            samplePercentage = 0;
+        }
+        int sampleSize = (int) Math.ceil(rowCount * samplePercentage);
+        var stepSize = execution.getConfig().stepSize();
+        float alpha = Ranking.HIGHEST.getValue() * stepSize / sampleSize;
+        String fqtn = (catalog != null && !catalog.isEmpty()) ? String.format("%s.%s.%s", catalog, schema, table) : String.format("%s.%s", schema, table);
+        String sql = "SELECT * FROM " + fqtn + " LIMIT " + sampleSize;
+        Map<String, Float> columnRecords = new HashMap<>();
+        try (var stmt = getConnection.createStatement(); var rs = stmt.executeQuery(sql)) {
+            ResultSetMetaData meta = rs.getMetaData();
+            int colCount = meta.getColumnCount();
+            for (int i = 1; i <= colCount; i++) {
+                columnRecords.put(meta.getColumnName(i), Ranking.HIGHEST.getValue());
+            }
+            while (rs.next()) {
+                for (int i = 1; i <= colCount; i++) {
+                    String col = meta.getColumnName(i);
+                    var value = rs.getObject(i);
+                    float current = columnRecords.getOrDefault(col, Ranking.HIGHEST.getValue());
+                    float rank = execution.rank(value);
+                    float adjust = (1 - rank) * alpha;
+                    float newValue = current - adjust;
+                    float minValue = Ranking.LOWEST.getValue();
+                    if (newValue < minValue) newValue = minValue;
+                    columnRecords.put(col, newValue);
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Failed to sample rows for table " + fqtn + ": " + e.getMessage());
+        }
+        float ranking = columnRecords.values().stream().max(Float::compare).orElse(Ranking.IGNORED.getValue());
         this.execution.rankTable(
-            new TableRecord(catalog, schema, table, type, rowCount, ranking)
+            new TableRecord(catalog, schema, table, type, rowCount, ranking, columnRecords)
         );
     }
 
