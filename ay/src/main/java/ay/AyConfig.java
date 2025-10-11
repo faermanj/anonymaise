@@ -10,7 +10,7 @@ public interface AyConfig {
     @WithDefault("PUBLIC")
     List<String> includeSchemas();
 
-    @WithDefault("0.1")
+    @WithDefault("0.2")
     float samplePercentage();
 
     @WithDefault("0.90")
