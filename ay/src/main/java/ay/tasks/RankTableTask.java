@@ -1,10 +1,15 @@
 
-package ay;
+package ay.tasks;
 
 import java.sql.Connection;
 import java.sql.ResultSetMetaData;
 import java.util.HashMap;
 import java.util.Map;
+
+import ay.Execution;
+import ay.model.Cell;
+import ay.model.Rankings;
+import ay.model.Table;
 
 public class RankTableTask implements Runnable {
     Execution execution;
@@ -40,7 +45,7 @@ public class RankTableTask implements Runnable {
         }
         int sampleSize = (int) Math.ceil(rowCount * samplePercentage);
         var stepSize = execution.getConfig().stepSize();
-        float alpha = Ranking.HIGHEST.getValue() * stepSize / sampleSize;
+        float alpha = Rankings.HIGHEST.getValue() * stepSize / sampleSize;
         String fqtn = (catalog != null && !catalog.isEmpty()) ? String.format("%s.%s.%s", catalog, schema, table) : String.format("%s.%s", schema, table);
         String sql = "SELECT * FROM " + fqtn + " LIMIT " + sampleSize;
         Map<String, Float> columnRecords = new HashMap<>();
@@ -48,17 +53,32 @@ public class RankTableTask implements Runnable {
             ResultSetMetaData meta = rs.getMetaData();
             int colCount = meta.getColumnCount();
             for (int i = 1; i <= colCount; i++) {
-                columnRecords.put(meta.getColumnName(i), Ranking.HIGHEST.getValue());
+                columnRecords.put(meta.getColumnName(i), Rankings.HIGHEST.getValue());
             }
             while (rs.next()) {
                 for (int i = 1; i <= colCount; i++) {
                     String col = meta.getColumnName(i);
                     var value = rs.getObject(i);
-                    float current = columnRecords.getOrDefault(col, Ranking.HIGHEST.getValue());
-                    float rank = execution.rank(value);
+                    float current = columnRecords.getOrDefault(col, Rankings.HIGHEST.getValue());
+                    Table tableRecord = new Table(
+                        catalog,
+                        schema,
+                        table,
+                        type,
+                        rowCount,
+                        null, // ranking not known yet
+                        columnRecords
+                    );
+                    Cell cell = new Cell(
+                        tableRecord,
+                        col,
+                        meta.getColumnTypeName(i),
+                        value
+                    );
+                    float rank = execution.rank(cell).value();
                     float adjust = (1 - rank) * alpha;
                     float newValue = current - adjust;
-                    float minValue = Ranking.LOWEST.getValue();
+                    float minValue = Rankings.LOWEST.getValue();
                     if (newValue < minValue) newValue = minValue;
                     columnRecords.put(col, newValue);
                 }
@@ -66,9 +86,9 @@ public class RankTableTask implements Runnable {
         } catch (Exception e) {
             System.err.println("Failed to sample rows for table " + fqtn + ": " + e.getMessage());
         }
-        float ranking = columnRecords.values().stream().max(Float::compare).orElse(Ranking.IGNORED.getValue());
-        this.execution.rankTable(
-            new TableRecord(catalog, schema, table, type, rowCount, ranking, columnRecords)
+        float ranking = columnRecords.values().stream().max(Float::compare).orElse(Rankings.IGNORED.getValue());
+        this.execution.putTableRank(
+            new Table(catalog, schema, table, type, rowCount, ranking, columnRecords)
         );
     }
 

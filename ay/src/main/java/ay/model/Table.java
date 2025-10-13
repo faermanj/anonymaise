@@ -1,8 +1,9 @@
-package ay;
+package ay.model;
 
 import java.util.Map;
 
-public record TableRecord(
+
+public record Table(
     String catalog,
     String schema,
     String table,
@@ -25,6 +26,6 @@ public record TableRecord(
     }
 
     public static boolean isIgnored(Float rank) {
-        return rank != null && rank.equals(ay.Ranking.IGNORED.getValue());
+        return rank != null && rank.equals(ay.model.Rankings.IGNORED.getValue());
     }
 }

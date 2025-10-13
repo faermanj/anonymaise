@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.Callable;
 
+import ay.model.Table;
 import jakarta.enterprise.context.Dependent;
 import jakarta.inject.Inject;
 
@@ -52,9 +53,9 @@ public class DisplayTask implements Callable<Void> {
             System.out.println("No tables processed yet.");
             return;
         }
-        List<TableRecord> tables = new ArrayList<>();
+        List<Table> tables = new ArrayList<>();
         for (var entry : tableMap.values()) {
-            if (!TableRecord.isIgnored(entry.ranking())) {
+            if (!Table.isIgnored(entry.ranking())) {
                 tables.add(entry);
             }
         }
@@ -72,14 +73,14 @@ public class DisplayTask implements Callable<Void> {
         int labelWidth = Math.max(28, Math.max(maxColNameWidth, maxTableNameWidth) + 6);
         int ratingWidth = 8;
 
-        for (TableRecord table : tables) {
+        for (Table table : tables) {
             // Table name and rating
             System.out.printf("%-" + labelWidth + "s %" + ratingWidth + ".2f\n", table.table(), table.ranking());
             // Columns, sorted by ranking desc, printed under the table
             var columns = table.columnRecords();
             if (columns != null && !columns.isEmpty()) {
                 var colList = new ArrayList<>(columns.entrySet());
-                colList.removeIf(e -> TableRecord.isIgnored(e.getValue()));
+                colList.removeIf(e -> Table.isIgnored(e.getValue()));
                 colList.sort((a, b) -> Float.compare(b.getValue(), a.getValue()));
                 for (var colEntry : colList) {
                     // Compensate label indentation so that ranks align

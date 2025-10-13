@@ -1,4 +1,4 @@
-package ay;
+package ay.config;
 
 import java.util.List;
 
@@ -16,6 +16,13 @@ public interface AyConfig {
     @WithDefault("0.90")
     float stepSize();
 
+    @WithDefault("0.80")
+    float rankingThreshold();
+
+    @WithDefault("0.80")
+    float confidenceThreshold();
+
     @WithDefault("100")
     Long testDataVolume();
+
 }

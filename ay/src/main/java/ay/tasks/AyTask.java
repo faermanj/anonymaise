@@ -1,10 +1,11 @@
-package ay;
+package ay.tasks;
 
 import java.time.Duration;
 import java.util.concurrent.Callable;
 
 import javax.sql.DataSource;
 
+import ay.Execution;
 import jakarta.enterprise.context.Dependent;
 import jakarta.inject.Inject;
 

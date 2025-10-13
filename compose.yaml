@@ -1,0 +1,19 @@
+# docker compose up
+version: '3.8'
+
+services:
+    mysql:
+        image: mysql:8.0
+        container_name: mysql
+        environment:
+            MYSQL_ROOT_PASSWORD: ay-mysql-root-password
+            MYSQL_DATABASE: ay-mysql
+            MYSQL_USER: ay-mysql-user
+            MYSQL_PASSWORD: ay-mysql-password
+        ports:
+            - "3306:3306"
+        volumes:
+            - mysql_data:${PWD}/.mysql/
+
+volumes:
+    mysql_data: {}

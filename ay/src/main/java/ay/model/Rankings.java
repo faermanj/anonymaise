@@ -1,6 +1,6 @@
-package ay;
+package ay.model;
 
-public enum Ranking {
+public enum Rankings {
     HIGHEST(0.999_999F),
     HIGH(0.999F),
     LOW(0.005F),
@@ -9,7 +9,7 @@ public enum Ranking {
 
     private final float value;
 
-    Ranking(float value) {
+    Rankings(float value) {
         this.value = value;
     }
     public float getValue() {

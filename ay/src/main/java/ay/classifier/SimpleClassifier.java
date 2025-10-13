@@ -1,9 +1,14 @@
-package ay;
 
+package ay.classifier;
+
+import ay.model.*;
 import jakarta.enterprise.context.ApplicationScoped;
 
+@Single
 @ApplicationScoped
-public class PIIClassifier {
+public class SimpleClassifier implements Classifier {
+
+    // ...existing code...
 
     /**
      * Classifies a value as PII or not, returning a ranking score.
@@ -11,12 +16,13 @@ public class PIIClassifier {
      * @param value the string value to classify
      * @return a float closer to Ranking.HIGHEST if PII, Ranking.LOWEST if not
      */
-    public float rank(Object value) {
+    public Ranking rank(Cell cell) {
+        Object value = cell.value();
         if (value == null || value.toString().isBlank())
-            return Ranking.LOW.getValue();
+            return Ranking.of(Rankings.LOW.getValue());
         var valueStr = value.toString().trim();
         if (singleNumber(valueStr)) {
-            return Ranking.LOW.getValue();
+            return Ranking.of(Rankings.LOW.getValue());
         }
         var isPII = false ||
             isLikelyEmail(valueStr) ||
@@ -24,8 +30,8 @@ public class PIIClassifier {
             isLikelySSN(valueStr) ||
             isLikelyFullName(valueStr) ||
             isLikelyAddress(valueStr);
-        var rank = isPII ? Ranking.HIGH.getValue() : Ranking.LOW.getValue();
-        return rank;
+        var rank = isPII ? Rankings.HIGH.getValue() : Rankings.LOW.getValue();
+        return Ranking.of(rank);
     }
 
     private boolean singleNumber(String valueStr) {

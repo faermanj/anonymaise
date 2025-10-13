@@ -2,6 +2,7 @@ package ay;
 
 import io.quarkus.logging.Log;
 import io.quarkus.picocli.runtime.annotations.TopCommand;
+import io.quarkus.runtime.Quarkus;
 import io.quarkus.runtime.QuarkusApplication;
 import io.quarkus.runtime.annotations.QuarkusMain;
 import jakarta.inject.Inject;
@@ -11,6 +12,8 @@ import java.time.Duration;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+
+import ay.tasks.AyTask;
 
 @QuarkusMain
 @TopCommand
@@ -63,5 +66,9 @@ public class AyMain implements QuarkusApplication, Runnable {
     @Override
     public int run(String... args) throws Exception {
         return new CommandLine(this, factory).execute(args);
+    }
+
+    public static void main(String[] args) {
+        Quarkus.run(AyMain.class, args);
     }
 }
